@@ -14,8 +14,7 @@ let intercept = 0
 
 function setup() {
   createCanvas(windowWidth, windowHeight)
-  background(51)
-  stroke(255)
+  stroke(80)
   strokeWeight(8)
 
   for (const p of points) {
@@ -40,7 +39,7 @@ function drawLine(s, i) {
   x2 = map(x2, 0, 1, 0, width)
   y2 = map(y2, 0, 1, height, 0)
   
-  stroke(255, 0, 255)
+  stroke("red")
   line(x1, y1, x2, y2)
 }
 
