@@ -62,15 +62,15 @@ function drawRegressionLine(s, i) {
 function drawErrors(s, i) { 
   stroke('purple')
   for (const p of points) {
-    const reg_y = s * p.x + i
+    const x = map(p.x, 0, 1, 0, width)
+    const y = map(p.y, 0, 1, height, 0)
+    const regY = map(s * p.x + i, 0, 1, height, 0)
 
     strokeWeight(10)
-    point(map(p.x, 0, 1, 0, width), map(reg_y, 0, 1, height, 0))
+    point(x, regY)
 
-    strokeWeight(1)
-    line(
-      map(p.x, 0, 1, 0, width), map(p.y, 0, 1, height, 0),
-      map(p.x, 0, 1, 0, width), map(reg_y, 0, 1, height, 0)
-    )
+    strokeWeight(0)
+    fill('grey')
+    square(x, regY, y-regY)
   }
 }
