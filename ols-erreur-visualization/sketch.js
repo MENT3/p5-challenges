@@ -22,12 +22,12 @@ function setup() {
   for (const p of points) {
     point(map(p.x, 0, 1, 0, width), map(p.y, 0, 1, height, 0))
   }
-}
 
-function draw() {
   strokeWeight(2)
   olsRegression(points)
   drawRegressionLine(slope, intercept)
+  drawErrors(slope, intercept)
+  console.log(slope, intercept)
 }
 
 function olsRegression(points) {
@@ -55,6 +55,22 @@ function drawRegressionLine(s, i) {
   x2 = map(x2, 0, 1, 0, width)
   y2 = map(y2, 0, 1, height, 0)
   
-  stroke("red")
+  stroke('red')
   line(x1, y1, x2, y2)
+}
+
+function drawErrors(s, i) { 
+  stroke('purple')
+  for (const p of points) {
+    const reg_y = s * p.x + i
+
+    strokeWeight(10)
+    point(map(p.x, 0, 1, 0, width), map(reg_y, 0, 1, height, 0))
+
+    strokeWeight(1)
+    line(
+      map(p.x, 0, 1, 0, width), map(p.y, 0, 1, height, 0),
+      map(p.x, 0, 1, 0, width), map(reg_y, 0, 1, height, 0)
+    )
+  }
 }
