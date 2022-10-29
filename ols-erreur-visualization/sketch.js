@@ -12,6 +12,8 @@ const points = [
 let slope = 1
 let intercept = 0
 
+// TODO draw error surface
+
 function setup() {
   createCanvas(windowWidth, windowHeight)
   stroke(80)
@@ -25,10 +27,24 @@ function setup() {
 function draw() {
   strokeWeight(2)
   olsRegression(points)
-  drawLine(slope, intercept)
+  drawRegressionLine(slope, intercept)
 }
 
-function drawLine(s, i) {
+function olsRegression(points) {
+  const xsum = points.reduce((acc, v) => acc + v.x, 0)
+  const ysum = points.reduce((acc, v) => acc + v.y, 0)
+  const xmean = xsum/points.length
+  const ymean = ysum/points.length
+  
+  const num = points.map(p => (p.x-xmean) * (p.y-ymean)).reduce((acc, v) => acc + v, 0)
+  const den = points.map(p => (p.x-xmean) * (p.x-xmean)).reduce((acc, v) => acc + v, 0)
+
+  // TODO return slope and intercept and assign it in draw loop
+  slope = num/den
+  intercept = ymean-slope*xmean 
+}
+
+function drawRegressionLine(s, i) {
   let x1 = 0
   let y1 = s * x1 + i
   let x2 = 1
@@ -41,17 +57,4 @@ function drawLine(s, i) {
   
   stroke("red")
   line(x1, y1, x2, y2)
-}
-
-function olsRegression(points) {
-  const xsum = points.reduce((acc, v) => acc + v.x, 0)
-  const ysum = points.reduce((acc, v) => acc + v.y, 0)
-  const xmean = xsum/points.length
-  const ymean = ysum/points.length
-  
-  const num = points.map(p => (p.x-xmean) * (p.y-ymean)).reduce((acc, v) => acc + v, 0)
-  const den = points.map(p => (p.x-xmean) * (p.x-xmean)).reduce((acc, v) => acc + v, 0)
-
-  slope = num/den
-  intercept = ymean-slope*xmean 
 }
