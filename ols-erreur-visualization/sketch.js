@@ -1,33 +1,8 @@
-const points = [
-  new p5.Vector(0.825, 0.78),
-  new p5.Vector(0.835, 0.56),
-  new p5.Vector(0.3725, 0.54),
-  new p5.Vector(0.4125, 0.415),
-  new p5.Vector(0.5425, 0.722),
-  new p5.Vector(0.7375, 0.35),
-  new p5.Vector(0.13, 0.305),
-  new p5.Vector(0.2525, 0.1825)
-]
-
-let slope = 1
-let intercept = 0
-
-// TODO draw error surface
-
-function setup() {
-  createCanvas(windowWidth, windowHeight)
-  stroke(80)
-  strokeWeight(8)
-
-  for (const p of points) {
-    point(map(p.x, 0, 1, 0, width), map(p.y, 0, 1, height, 0))
-  }
-
-  strokeWeight(2)
-  olsRegression(points)
-  drawRegressionLine(slope, intercept)
-  drawErrors(slope, intercept)
-  console.log(slope, intercept)
+function generateRandomColor() {
+  const r = random(255)
+  const g = random(60, 200)
+  const b = random(180, 255)
+  return [r, g, b]
 }
 
 function olsRegression(points) {
@@ -35,13 +10,12 @@ function olsRegression(points) {
   const ysum = points.reduce((acc, v) => acc + v.y, 0)
   const xmean = xsum/points.length
   const ymean = ysum/points.length
-  
   const num = points.map(p => (p.x-xmean) * (p.y-ymean)).reduce((acc, v) => acc + v, 0)
   const den = points.map(p => (p.x-xmean) * (p.x-xmean)).reduce((acc, v) => acc + v, 0)
 
-  // TODO return slope and intercept and assign it in draw loop
-  slope = num/den
-  intercept = ymean-slope*xmean 
+  const s = num/den
+  const i = ymean-s*xmean 
+  return [s, i]
 }
 
 function drawRegressionLine(s, i) {
@@ -55,22 +29,36 @@ function drawRegressionLine(s, i) {
   x2 = map(x2, 0, 1, 0, width)
   y2 = map(y2, 0, 1, height, 0)
   
+  strokeWeight(2)
   stroke('red')
   line(x1, y1, x2, y2)
 }
 
-function drawErrors(s, i) { 
+function drawErrors(points, s, i) { 
   stroke('purple')
   for (const p of points) {
     const x = map(p.x, 0, 1, 0, width)
     const y = map(p.y, 0, 1, height, 0)
     const regY = map(s * p.x + i, 0, 1, height, 0)
 
-    strokeWeight(10)
-    point(x, regY)
-
     strokeWeight(0)
-    fill('grey')
+    fill(...generateRandomColor())
     square(x, regY, y-regY)
+  }
+}
+
+function setup() {
+  // TODO clean it
+  const points = Array(10).fill(0).map(p => new p5.Vector(random(0.1, 0.9), random(0.2, 0.8)))
+  createCanvas(windowWidth, windowHeight)
+
+  const [slope, intercept] = olsRegression(points)
+  drawRegressionLine(slope, intercept)
+  drawErrors(points, slope, intercept)
+
+  stroke(80)
+  strokeWeight(8)
+  for (const p of points) {
+    point(map(p.x, 0, 1, 0, width), map(p.y, 0, 1, height, 0))
   }
 }
